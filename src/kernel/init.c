@@ -60,7 +60,7 @@ closure_function(3, 2, void, fsstarted,
                  u8 *, mbr, block_io, r, block_io, w,
                  filesystem, fs, status, s)
 {
-    init_debug("%s\n", __func__);
+    init_debug("%s", __func__);
     heap h = heap_locked(init_heaps);
     if (!is_ok(s)) {
         buffer b = allocate_buffer(h, 128);
@@ -81,6 +81,15 @@ closure_function(3, 2, void, fsstarted,
     assert(wrapped_root != INVALID_ADDRESS);
     // XXX use wrapped_root after root fs is separate
     tuple root = filesystem_getroot(root_fs);
+#ifdef REQUIRE_ENABLE_SMP_FLAG
+    if (get(root, sym(enable_smp)))
+#endif
+    {
+        init_debug("calling start_secondary_cores");
+        start_secondary_cores(init_heaps);
+        init_debug("total_processors %d", total_processors);
+        bitmap_alloc(idle_cpu_mask, total_processors);
+    }
     tuple mounts = get_tuple(root, sym(mounts));
     if (mounts)
         storage_set_mountpoints(mounts);
@@ -303,8 +312,8 @@ void kernel_runtime_init(kernel_heaps kh)
     init_debug("LWIP init");
     init_net(kh);
 
-    init_debug("start_secondary_cores");
-    start_secondary_cores(kh);
+    init_debug("count_processors");
+    count_processors();
     init_scheduler_cpus(misc);
 
     init_debug("probe fs, register storage drivers");

@@ -181,6 +181,10 @@ void halt(char *format, ...)
 u64 total_processors = 1;
 u64 present_processors = 1;
 
+void count_processors(void)
+{
+}
+
 void start_secondary_cores(kernel_heaps kh)
 {
 }

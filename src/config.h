@@ -1,3 +1,6 @@
+/* If defined, the "enable_smp" manifest flag is required to enable secondary cores. */
+#define REQUIRE_ENABLE_SMP_FLAG
+
 /* identity-mapped space for initial page tables */
 #define INITIAL_PAGES_SIZE (1 * MB)
 

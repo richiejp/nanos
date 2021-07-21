@@ -295,7 +295,6 @@ void init_scheduler(heap h)
 
 void init_scheduler_cpus(heap h)
 {
-    idle_cpu_mask = allocate_bitmap(h, h, total_processors);
+    idle_cpu_mask = allocate_bitmap(h, h, present_processors);
     assert(idle_cpu_mask != INVALID_ADDRESS);
-    bitmap_alloc(idle_cpu_mask, total_processors);
 }

@@ -205,7 +205,7 @@ closure_function(0, 2, void, count_processors_handler,
     }
 }
 
-static void count_processors()
+void count_processors(void)
 {
     acpi_madt madt = acpi_get_table(ACPI_SIG_MADT);
     if (madt) {
@@ -221,7 +221,6 @@ static void count_processors()
 void start_secondary_cores(kernel_heaps kh)
 {
     memory_barrier();
-    count_processors();
     init_debug("init_mxcsr");
     init_mxcsr();
     init_debug("starting APs");

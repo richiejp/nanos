@@ -295,6 +295,7 @@ extern u64 present_processors;
 extern void xsave(context f);
 
 void cpu_init(int cpu);
+void count_processors(void);
 void start_secondary_cores(kernel_heaps kh);
 void detect_hypervisor(kernel_heaps kh);
 void detect_devices(kernel_heaps kh, storage_attach sa);
