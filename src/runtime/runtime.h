@@ -153,7 +153,7 @@ typedef struct flush_entry *flush_entry;
 
 #define msg_err(fmt, ...) rprintf("%s error: " fmt, __func__,   \
 				  ##__VA_ARGS__)
-
+#define ENABLE_MSG_WARN
 #ifdef ENABLE_MSG_WARN
 #define msg_warn(fmt, ...) rprintf("%s warning: " fmt, __func__,   \
 				  ##__VA_ARGS__)
