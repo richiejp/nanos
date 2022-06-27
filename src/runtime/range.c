@@ -39,9 +39,14 @@ boolean rangemap_insert(rangemap rm, rmnode n)
 
 boolean rangemap_reinsert(rangemap rm, rmnode n, range k)
 {
+    range old = n->r;
     rangemap_remove_node(rm, n);
     n->r = k;
-    return rangemap_insert(rm, n);
+    if (!rangemap_insert(rm, n)) {
+        n->r = old;
+        return rangemap_insert(rm, n);
+    }
+    return true;
 }
 
 /* Can be called with a range already (partially or totally) present in the range map; merges the
