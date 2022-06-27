@@ -1766,12 +1766,17 @@ static sysreturn brk(void *addr)
     process p = current->p;
     process_lock(p);
 
+    thread_log(current, "brk: p->brk: %p, addr: %p", p->brk, addr);
+
     /* on failure, return the current break */
     if (!addr || p->brk == addr)
         goto out;
 
     u64 old_end = pad(u64_from_pointer(p->brk), PAGESIZE);
     u64 new_end = pad(u64_from_pointer(addr), PAGESIZE);
+
+    thread_log(current, "brk: old_end: %lx, new_end: %lx", old_end, new_end);
+
     if (old_end > new_end) {
         if (u64_from_pointer(addr) < p->heap_base ||
             !adjust_process_heap(p, irange(p->heap_base, new_end)))
@@ -1781,8 +1786,10 @@ static sysreturn brk(void *addr)
     } else if (new_end > old_end) {
         u64 alloc = new_end - old_end;
         if (!validate_user_memory(pointer_from_u64(old_end), alloc, true) ||
-            !adjust_process_heap(p, irange(p->heap_base, new_end)))
-            goto out;
+            !adjust_process_heap(p, irange(p->heap_base, new_end))) {
+		thread_log(current, "brk: failed");
+		goto out;
+	}
         pageflags flags = pageflags_writable(pageflags_noexec(pageflags_user(pageflags_memory())));
         if (new_zeroed_pages(old_end, alloc, flags, 0) == INVALID_PHYSICAL) {
             adjust_process_heap(p, irange(p->heap_base, old_end));
@@ -1793,6 +1800,8 @@ static sysreturn brk(void *addr)
   out:
     addr = p->brk;
     process_unlock(p);
+
+    thread_log(current, "brk: ret addr: %p", addr);
     return sysreturn_from_pointer(addr);
 }
 
